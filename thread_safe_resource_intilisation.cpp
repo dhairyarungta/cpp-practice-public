@@ -42,4 +42,3 @@ void undefined_behaviour_with_double_checked_locking()
     resource_ptr->do_soemthing();
 
 }
-
