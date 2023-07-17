@@ -17,5 +17,6 @@ void foo()
 {
     std::call_once(resource_flag, init_resource);
     resource_ptr->do_something();
-    
+
 }
+

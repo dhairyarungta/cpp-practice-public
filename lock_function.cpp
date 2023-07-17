@@ -51,5 +51,8 @@ void get_and_process_data()
     result_type result = process(data_to_process);
     my_lock.lock();
     write_result(data_to_process, result);
-    
+
+
+
+
 }
