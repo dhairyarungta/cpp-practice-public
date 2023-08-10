@@ -4,7 +4,12 @@ struct GetPromise
 {
     PromiseType *p_;
     bool await_ready(){return false;}
-    bool await_suspend(std::coroutine_handle<PromiseType>)
+    bool await_suspend(std::coroutine_handle<PromiseType>h)
+    {
+        p_ = &(h.promise());
+        return false; // doesn't suspend actually at the end
+    }
+    PromiseType* await_resume(){return p_;}
 };
 
 struct ReturnObject3
@@ -24,6 +29,8 @@ struct ReturnObject3
         std::suspend_never final_suspend(){return{};}
         void unhandled_exception(){}
     };
+    std::coroutine_handle<promise_type>h_;
+    operator std::coroutine_handle<promise_type>()const {return h_;}
 };
 
 
@@ -36,6 +43,7 @@ ReturnObject3 coutner()
         pp->value_ = i;
         co_await std::suspend_always{};
     }
+    //two different awaiter objects being used in the same coroutine
 }
 
 
