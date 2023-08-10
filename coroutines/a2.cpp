@@ -20,13 +20,21 @@ struct Awaiter
 {
     std::coroutine_handle<>*hp_;
 
-    constexpr bool await_read()const noexcept{return false};
+    constexpr bool await_ready()const noexcept{return false};
+    void await_suspend(std::coroutine_handle<>h){*hp_ = h;}
+    constexpr void await_resume()const noexcept{}
     
-}
+};
+
 
 ReturnObject counter(std::coroutine_handle<>*continuation_out)
 {
     Awaiter a{continuation_out};
+    for (int i=0;;++i )
+    {
+        co_await a;
+        std::cout<<"counter: "<<i <<std::endl;
+    }
 
 }
 void main()
@@ -34,5 +42,21 @@ void main()
     std::coroutine_handle<>h;
     counter(&h);
     for (int i =0 ;i<3;++i)
-
+    {
+        std::cout <<"inside main:\n";
+        h();
+    }
+    h.destroy();
 }
+
+
+/*void Awaiter::await_suspend(std::coroutine_handle<>h)
+// {
+    if(hp_)
+    {
+        *hp_ = h;
+        hp_ = nullptr;
+    }
+// }
+
+*/
