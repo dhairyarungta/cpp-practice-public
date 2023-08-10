@@ -29,16 +29,24 @@ struct ReturnObject3
 
 ReturnObject3 coutner()
 {
+    auto pp = co_await GetPromise<ReturnObject3::promise_type>{};
 
+    for (unsigned i =0;;i++)
+    {
+        pp->value_ = i;
+        co_await std::suspend_always{};
+    }
 }
 
 
 void main()
 {
     std::coroutine_handle<ReturnObject3::promise_type>h = counter3();
-
+    ReturnObject3::promise_type &promise = h.promise();
     for (int i =0;i<3;i++)
     {
-
+        std::cout<<"coutner: "<<promise.value_<<std::endl;
+        h();
     }
+    h.destroy();
 }
