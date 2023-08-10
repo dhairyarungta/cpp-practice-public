@@ -60,3 +60,58 @@ void main()
 // }
 
 */
+
+
+struct ReturnObject 
+{
+    struct promise_type
+    {
+        std::suspend_never initial_suspend(){return {};}
+        std::suspend_never final_suspend(){return {};}
+        ReturnObject get_return_value ()
+        {
+            return {};
+        }
+
+        void unhandled_exception(){}
+    };
+};
+
+struct Awaiter
+{
+    std::coroutine_handle<>*hp_;
+    constexpr bool await_ready()const noexcept{return false;}
+    void await_suspend(std::coroutine_handle<>h){
+        if(hp_)
+        {
+            *hp = h;
+            hp = nullptr;
+        }
+    }
+    constexpr void await_resume(){}
+};
+
+
+ReturnObject counter(std::coroutine_handle<>*handle_ptr)
+{   
+    Awaiter a{handle_ptr};
+
+    for (unsigned i =0;;++i)
+    {
+        co_await a;
+        cout<<i<<endl;
+    }
+}
+
+
+void main()
+{   
+    std::coroutine_handle<>h;
+    counter(&h);
+    for (int i= 0;i< 3;++i)
+    {
+        cout<<"in main\n";
+        h();
+    }
+    h.destroy();
+}
