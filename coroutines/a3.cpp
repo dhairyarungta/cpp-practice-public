@@ -45,3 +45,5 @@ void main()
     }
     h.destroy();
 }
+
+//template<class Promise = void> struct coroutine_handle;
