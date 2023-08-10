@@ -29,7 +29,7 @@ ReturnObject2 counter2 ()
 
     for (unsigned i =0 ;;++i)
     {
-        co_await std::suspend_always();
+        co_await std::suspend_always{};
         std::cout<<"counter2: "<<i<<std::endl;
     }
 
